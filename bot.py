@@ -63,18 +63,16 @@ async def ignore_other_commands(_, message: Message):
     if message.from_user.id == ADMIN_ID:
         return
 
-# Run both FastAPI and Pyrogram bot concurrently
-async def main():
-    # Start FastAPI app in the background
-    loop = asyncio.get_event_loop()
-    server = loop.create_task(uvicorn.run("bot:app", host="0.0.0.0", port=8080))
-    
-    # Start the Pyrogram bot
+# Start FastAPI app and Pyrogram bot concurrently
+async def start():
+    # Run the FastAPI server in a separate task
+    uvicorn_task = asyncio.create_task(uvicorn.run("bot:app", host="0.0.0.0", port=8080))
+
+    # Run the bot concurrently
     await bot.start()
 
-    # Run FastAPI and Pyrogram concurrently
-    await asyncio.gather(server, bot.run())
+    # Wait for both FastAPI and the bot to run
+    await asyncio.gather(uvicorn_task, bot.run())
 
 if __name__ == "__main__":
-    # Run everything concurrently
-    asyncio.run(main())
+    asyncio.run(start())

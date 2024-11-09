@@ -29,7 +29,8 @@ async def health_check():
 
 # Function to add a user to MongoDB if new
 async def add_user(user_id):
-    if not users_collection.find_one({"user_id": user_id}):
+    user_data = users_collection.find_one({"user_id": user_id})
+    if not user_data:
         users_collection.insert_one({"user_id": user_id})
 
 # Command to get user count

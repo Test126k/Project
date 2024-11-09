@@ -2,9 +2,9 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 
 # Replace with your own credentials
-API_ID = "YOUR_API_ID"
-API_HASH = "YOUR_API_HASH"
-BOT_TOKEN = "YOUR_BOT_TOKEN"
+API_ID = "26300022"
+API_HASH = "def44e13defba9d104323e821955dfa3"
+BOT_TOKEN = "7207796438:AAEAeEf3DWK5qEVOzihkmGw4E4SmYYWpnx8"
 OWNER_ID = 6057768840  # Replace with your Telegram user ID
 
 # Initialize the bot

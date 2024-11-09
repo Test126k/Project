@@ -67,7 +67,7 @@ async def ignore_other_commands(_, message: Message):
 # Function to start FastAPI in a separate process
 def start_fastapi():
     # Run the FastAPI app on port 8080
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run("bot:app", host="0.0.0.0", port=8080)
 
 # Function to start the bot
 def start_bot():

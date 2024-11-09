@@ -5,7 +5,7 @@ from pyrogram.types import Message
 API_ID = "YOUR_API_ID"
 API_HASH = "YOUR_API_HASH"
 BOT_TOKEN = "YOUR_BOT_TOKEN"
-OWNER_ID = YOUR_TELEGRAM_USER_ID  # Replace with your Telegram user ID
+OWNER_ID = 6057768840  # Replace with your Telegram user ID
 
 # Initialize the bot
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)

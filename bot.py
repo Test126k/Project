@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from pyrogram.types import Message
 from fastapi import FastAPI
 import uvicorn
-from threading import Thread
 
 # Set up your bot and MongoDB credentials
 API_ID = int(os.getenv("API_ID"))
@@ -63,12 +62,8 @@ async def ignore_other_commands(_, message: Message):
     if message.from_user.id == ADMIN_ID:
         return
 
-# Function to run the FastAPI app in a separate thread
-def run_health_check_server():
-    uvicorn.run("bot:app", host="0.0.0.0", port=8080)
-
 if __name__ == "__main__":
-    # Start the health check server in a separate thread
-    Thread(target=run_health_check_server).start()
+    # Run the FastAPI server with uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)  # Running FastAPI in the main thread
     print("Bot is running...")
     bot.run()

@@ -3,17 +3,18 @@ import asyncio
 from pyrogram import Client, filters
 from pymongo import MongoClient
 from pyrogram.types import Message
-from fastapi import FastAPI
+import multiprocessing
 import uvicorn
+from fastapi import FastAPI
 
-# Set up your bot and MongoDB credentials
+# Set up bot and MongoDB credentials
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 MONGODB_URI = os.getenv("MONGODB_URI")
 
-# Initialize the bot and MongoDB client
+# Initialize bot and MongoDB
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 mongo_client = MongoClient(MONGODB_URI)
 db = mongo_client["telegram_bot_db"]
@@ -26,7 +27,7 @@ app = FastAPI()
 async def health_check():
     return {"status": "healthy"}
 
-# Function to add a user to MongoDB if they are new
+# Function to add a user to MongoDB if new
 async def add_user(user_id):
     if not users_collection.find_one({"user_id": user_id}):
         users_collection.insert_one({"user_id": user_id})
@@ -51,28 +52,30 @@ async def broadcast_command(_, message: Message):
 
     await message.reply("Broadcast sent to all users.")
 
-# Track unique users who interact with the bot
+# Track unique users
 @bot.on_message(filters.private)
 async def track_user(_, message: Message):
     user_id = message.from_user.id
     await add_user(user_id)
 
-# Ignore other commands except for admin commands defined above
+# Ignore other commands
 @bot.on_message(~filters.command(["users", "broadcast"]))
 async def ignore_other_commands(_, message: Message):
     if message.from_user.id == ADMIN_ID:
         return
 
-# Start FastAPI app and Pyrogram bot concurrently
-async def start():
-    # Run the FastAPI server in a separate task
-    uvicorn_task = asyncio.create_task(uvicorn.run("bot:app", host="0.0.0.0", port=8080))
+# Function to start FastAPI in a separate process
+def start_fastapi():
+    uvicorn.run(app, host="0.0.0.0", port=8080)
 
-    # Run the bot concurrently
-    await bot.start()
-
-    # Wait for both FastAPI and the bot to run
-    await asyncio.gather(uvicorn_task, bot.run())
+# Function to start the bot
+def start_bot():
+    bot.run()
 
 if __name__ == "__main__":
-    asyncio.run(start())
+    # Start FastAPI in a separate process
+    fastapi_process = multiprocessing.Process(target=start_fastapi)
+    fastapi_process.start()
+
+    # Start the bot in the main process
+    start_bot()

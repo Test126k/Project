@@ -64,6 +64,6 @@ async def ignore_other_commands(_, message: Message):
 
 if __name__ == "__main__":
     # Run the FastAPI server with uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)  # Running FastAPI in the main thread
+    uvicorn.run("bot:app", host="0.0.0.0", port=8080)  # Running FastAPI in the main thread using import string
     print("Bot is running...")
     bot.run()

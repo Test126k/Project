@@ -1,4 +1,5 @@
 import os
+import asyncio
 from pyrogram import Client, filters
 from pymongo import MongoClient
 from pyrogram.types import Message
@@ -62,8 +63,18 @@ async def ignore_other_commands(_, message: Message):
     if message.from_user.id == ADMIN_ID:
         return
 
+# Run both FastAPI and Pyrogram bot concurrently
+async def main():
+    # Start FastAPI app in the background
+    loop = asyncio.get_event_loop()
+    server = loop.create_task(uvicorn.run("bot:app", host="0.0.0.0", port=8080))
+    
+    # Start the Pyrogram bot
+    await bot.start()
+
+    # Run FastAPI and Pyrogram concurrently
+    await asyncio.gather(server, bot.run())
+
 if __name__ == "__main__":
-    # Run the FastAPI server with uvicorn
-    uvicorn.run("bot:app", host="0.0.0.0", port=8080)  # Running FastAPI in the main thread using import string
-    print("Bot is running...")
-    bot.run()
+    # Run everything concurrently
+    asyncio.run(main())

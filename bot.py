@@ -6,13 +6,14 @@ from fastapi import FastAPI
 import uvicorn
 from threading import Thread
 
+# Set up your bot and MongoDB credentials
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 MONGODB_URI = os.getenv("MONGODB_URI")
-# Set up your bot and MongoDB credentials
-#Initialize the bot and MongoDB client
+
+# Initialize the bot and MongoDB client
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 mongo_client = MongoClient(MONGODB_URI)
 db = mongo_client["telegram_bot_db"]
@@ -41,7 +42,7 @@ async def user_count_command(_, message: Message):
 async def broadcast_command(_, message: Message):
     broadcast_message = message.reply_to_message.text
     user_ids = [user["user_id"] for user in users_collection.find()]
-
+    
     for user_id in user_ids:
         try:
             await bot.send_message(chat_id=user_id, text=broadcast_message)
@@ -64,7 +65,7 @@ async def ignore_other_commands(_, message: Message):
 
 # Function to run the FastAPI app in a separate thread
 def run_health_check_server():
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run("bot:app", host="0.0.0.0", port=8080)
 
 if __name__ == "__main__":
     # Start the health check server in a separate thread

@@ -28,10 +28,19 @@ async def health_check():
     return {"status": "healthy"}
 
 # Function to add a user to MongoDB if new
-async def add_user(user_id):
+async def add_user(user_id, username=None, first_name=None, last_name=None):
+    # Check if user already exists
     user_data = users_collection.find_one({"user_id": user_id})
     if not user_data:
-        users_collection.insert_one({"user_id": user_id})
+        # Insert new user into DB
+        users_collection.insert_one({
+            "user_id": user_id,
+            "username": username,
+            "first_name": first_name,
+            "last_name": last_name
+        })
+    else:
+        print(f"User {user_id} already exists in the database")
 
 # Command to get user count
 @bot.on_message(filters.command("users") & filters.user(ADMIN_ID))
@@ -57,7 +66,12 @@ async def broadcast_command(_, message: Message):
 @bot.on_message(filters.private)
 async def track_user(_, message: Message):
     user_id = message.from_user.id
-    await add_user(user_id)
+    username = message.from_user.username
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name
+
+    # Add or update user in the database
+    await add_user(user_id, username, first_name, last_name)
 
 # Ignore other commands
 @bot.on_message(~filters.command(["users", "broadcast"]))

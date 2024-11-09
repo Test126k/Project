@@ -6,14 +6,13 @@ from fastapi import FastAPI
 import uvicorn
 from threading import Thread
 
+API_ID = int(os.getenv("API_ID"))
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
+MONGODB_URI = os.getenv("MONGODB_URI")
 # Set up your bot and MongoDB credentials
-API_ID = int(os.getenv("26300022"))
-API_HASH = os.getenv("def44e13defba9d104323e821955dfa3")
-BOT_TOKEN = os.getenv("7207796438:AAEAeEf3DWK5qEVOzihkmGw4E4SmYYWpnx8")
-ADMIN_ID = int(os.getenv("6057768840"))
-MONGODB_URI = os.getenv("mongodb+srv://arman1262k:Ak9971101586@cluster0.iycaq.mongodb.net/?retryWrites=true&w=majority")
-
-# Initialize the bot and MongoDB client
+#Initialize the bot and MongoDB client
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 mongo_client = MongoClient(MONGODB_URI)
 db = mongo_client["telegram_bot_db"]

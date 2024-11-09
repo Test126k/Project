@@ -2,3 +2,4 @@ pymongo
 pyrogram
 fastapi
 uvicorn
+TgCrypto  # Optional but recommended for better performance

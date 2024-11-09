@@ -1,2 +1,4 @@
+pymongo
 pyrogram
-tgcrypto
+fastapi
+uvicorn
